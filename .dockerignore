@@ -1,0 +1,65 @@
+# .dockerignore
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.sh
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+vendor/
+
+# Go workspace file
+go.work
+
+# IDE-specific files
+.idea/
+.vscode/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Binary output directory
+/bin/
+
+# Log files
+*.log
+
+# Environment variables file
+.env
+
+# Debug files
+debug
+
+# Project-specific ignore
+/tmp
+/script
+
+# README and other documentation
+README.md
+docs/
+
+# Build and CI configuration
+.travis.yml
+.gitlab-ci.yml
+appveyor.yml
+
+# Test files
+*_test.go
