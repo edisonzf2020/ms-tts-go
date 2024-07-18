@@ -29,7 +29,7 @@ RUN apk update --no-cache && apk add --no-cache ca-certificates
 ENV TZ Asia/Shanghai
 
 # 暴露端口
-EXPOSE 8080
+EXPOSE 8070
 
 # 运行应用程序
 CMD ["./main"]

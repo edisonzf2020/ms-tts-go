@@ -15,18 +15,31 @@ import (
 
 var log = logrus.New()
 
-func main() {
-    // 加载 .env 文件
-    err := godotenv.Load()
-    if err != nil {
-        log.Fatal("Error loading .env file")
+func loadConfig() {
+    // 尝试加载 .env 文件，如果失败则从环境变量中读取
+    if err := godotenv.Load(); err != nil {
+        log.Warn("Error loading .env file. Using environment variables.")
     }
+
+    // 设置默认值或从环境变量中读取
+    if os.Getenv("PORT") == "" {
+        os.Setenv("PORT", "8070")
+    }
+    if os.Getenv("CACHE_DURATION") == "" {
+        os.Setenv("CACHE_DURATION", "3600")
+    }
+    
+    // 检查必需的环境变量
+    if os.Getenv("SECRET_TOKEN") == "" {
+        log.Fatal("SECRET_TOKEN is not set. This is required.")
+    }
+}
+
+func main() {
+    loadConfig()
 
     router := routes.SetupRouter()
     port := os.Getenv("PORT")
-    if port == "" {
-        port = "8080"
-    }
 
     srv := &http.Server{
         Addr:    ":" + port,

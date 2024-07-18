@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  ms-tts-go:
+    image: ghcr.io/edisonzf2020/ms-tts-go:v0.1.1
+    container_name: ms-tts-go
+    ports:
+      - "8070:8070"
+    environment:
+      - "PORT=8070"
+      - "SECRET_TOKEN=${SECRET_TOKEN}"
+      - "CACHE_DURATION=3600"
+    volumes:
+      - .env:/app/.env
+    restart: unless-stopped
+
+volumes:
+  ms-tts-go-data:
