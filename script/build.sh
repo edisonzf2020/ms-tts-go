@@ -1,1 +1,1 @@
-docker buildx build --platform linux/amd64,linux/arm64 --tag edisonzf2020/ms-tts-go  .. --push
+docker buildx build --platform linux/amd64,linux/arm64 --tag edisonzf2020/ms-tts-go:v0.1  .. --push

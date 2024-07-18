@@ -269,3 +269,7 @@ func ByteCountIEC(b int64) string {
 func ValidateToken(token string) bool {
     return token == os.Getenv("SECRET_TOKEN")
 }
+
+func GenerateRequestID() string {
+    return uuid.New().String()
+}
