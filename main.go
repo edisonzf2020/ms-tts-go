@@ -38,7 +38,11 @@ func loadConfig() {
 func main() {
     loadConfig()
 
-    router := routes.SetupRouter()
+    // 配置 logger
+    log.SetFormatter(&logrus.JSONFormatter{})
+    log.SetLevel(logrus.InfoLevel)
+
+    router := routes.SetupRouter(log)
     port := os.Getenv("PORT")
 
     srv := &http.Server{
