@@ -200,9 +200,7 @@ function dateFormat(): string {
 
 async function getVoice(text: string, voiceName = "zh-CN-XiaoxiaoMultilingualNeural", rate = 0, pitch = 0, outputFormat = "audio-24khz-48kbitrate-mono-mp3", download = false): Promise<Response> {
     const currentTime = Date.now() / 1000;
-    
-    // 检查 expiredAt 是否为 null 或者已过期
-    if (expiredAt === null || currentTime >= expiredAt - 60) {
+    if (!expiredAt || expiredAt <= currentTime + 60) {
         endpoint = await getEndpoint();
         const jwt = endpoint.t.split(".")[1];
         const decodedJwt = JSON.parse(atob(jwt));
@@ -214,11 +212,9 @@ async function getVoice(text: string, voiceName = "zh-CN-XiaoxiaoMultilingualNeu
         const seconds = expiredAt - currentTime;
         console.log("expiredAt:" + seconds / 60 + "m left");
     }
-
     if (!endpoint) {
         throw new Error("Endpoint not initialized");
     }
-
     const url = `https://${endpoint.r}.tts.speech.microsoft.com/cognitiveservices/v1`;
     const headers = {
         "Authorization": endpoint.t,
@@ -227,20 +223,28 @@ async function getVoice(text: string, voiceName = "zh-CN-XiaoxiaoMultilingualNeu
         "X-Microsoft-OutputFormat": outputFormat
     };
     const ssml = getSsml(text, voiceName, rate, pitch);
-    const response = await fetch(url, {
-        method: "POST",
-        headers: headers,
-        body: ssml
-    });
-    if (response.ok) {
-        if (!download) {
-            return response;
+    console.log("Sending TTS request:", { url, headers, ssml });
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: headers,
+            body: ssml
+        });
+        if (response.ok) {
+            console.log("TTS request successful");
+            if (!download) {
+                return response;
+            }
+            const resp = new Response(response.body, response);
+            resp.headers.set("Content-Disposition", `attachment; filename="${crypto.randomUUID().replace(/-/g, "")}.mp3"`);
+            return resp;
+        } else {
+            console.error("TTS request failed:", response.status, response.statusText);
+            return new Response(response.statusText, { status: response.status });
         }
-        const resp = new Response(response.body, response);
-        resp.headers.set("Content-Disposition", `attachment; filename="${crypto.randomUUID().replace(/-/g, "")}.mp3"`);
-        return resp;
-    } else {
-        return new Response(response.statusText, { status: response.status });
+    } catch (error) {
+        console.error("TTS request error:", error);
+        return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
     }
 }
 
